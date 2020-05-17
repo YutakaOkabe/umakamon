@@ -15,8 +15,21 @@ if (!empty($_POST)) {
     if (strlen($_POST['password']) < 4) {
         $error['password'] = 'length';
     }
+    $fileName = $_FILES['image']['name'];
+    if (!empty($fileName)) {
+        $ext = substr($fileName, -3);
+        // 拡張子を取り出す
+        if ( $ext != 'jpg' && $ext != 'png' && $ext != 'gif' ){
+            $error['image'] = 'type';
+        }
+    }
     if (empty($error)) {
+        $image = date('YmdHis') . $fileName;
+        // 「年月日秒＋ファイル名」としてファイルを保存することで重複を防ぐ
+        move_uploaded_file($_FILES['image']['tmp_name'], '../member_picture/' . $image);
+        // $_FILES['image']['tmp_name']にあるファイルを第2引数の場所に移動
         $_SESSION['join'] = $_POST;
+        $_SESSION['join']['image'] = $image;
         header('Location: check.php');
         exit();
         // $_SESSIONは2次元配列になる
@@ -41,13 +54,15 @@ if ($_REQUEST['action'] === 'rewrite' && isset($_SESSION['join'])){
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン</title>
+    <title>会員登録</title>
 </head>
 <body>
 <h1>会員登録</h1>
     <p>以下のフォームに必要事項をご記入ください</p>
-    <form action="" method="post"><!--フォーム内でnameで名づけられたデータをaction属性のURLへmethod属性のHTTPのPOSTメソッドで送信-->
+    <form action="" method="post" enctype="multipart/form-data">
+    <!--フォーム内でnameで名づけられたデータをaction属性のURLへmethod属性のHTTPのPOSTメソッドで送信-->
     <!--action属性がからの場合には自分自身のページに戻ってくる-->
+    <!--enctype="multipart/form-data":フォームでファイルを送信するときに必要になる-->
         <dl>
             <dt>ニックネーム　必須</dt>
             <dd>
@@ -78,6 +93,9 @@ if ($_REQUEST['action'] === 'rewrite' && isset($_SESSION['join'])){
             <dt>写真など</dt>
             <dd>
                 <input type="file" name="image">
+                <?php if($error['image']==='type'): ?>
+                <p>* 写真は「jpg」「png」「gif」のいづれかの形式でアップロードしてください</p>
+                <?php endif; ?>
             </dd>
         </dl>
         <input type="submit" value="ログインする">
