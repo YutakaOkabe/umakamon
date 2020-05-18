@@ -1,7 +1,9 @@
 <?php
 session_start();
+require('../dbconnect.php');
 
 if (!empty($_POST)) {
+    // 必須項目のチェック
     if ($_POST['name'] === '') {
         // sessionを使う関係で文中にphpを書けないので，変数に記録して後から変数配列の内容を表示
         $error['name'] = 'blank';
@@ -15,6 +17,7 @@ if (!empty($_POST)) {
     if (strlen($_POST['password']) < 4) {
         $error['password'] = 'length';
     }
+    // ファイル種類のチェック
     $fileName = $_FILES['image']['name'];
     if (!empty($fileName)) {
         $ext = substr($fileName, -3);
@@ -23,6 +26,16 @@ if (!empty($_POST)) {
             $error['image'] = 'type';
         }
     }
+    // アカウント重複のチェック
+    if (empty($error)){
+        $member = $db->prepare('SELECT COUNT(*) AS cnt FROM members WHERE email=?');
+        $member->execute(array($_POST['email']));
+        $record = $member->fetch();
+        if ( $record['cnt'] > 0){
+            $error['email'] = 'duplicate';
+        }
+    }
+
     if (empty($error)) {
         $image = date('YmdHis') . $fileName;
         // 「年月日秒＋ファイル名」としてファイルを保存することで重複を防ぐ
@@ -78,6 +91,9 @@ if ($_REQUEST['action'] === 'rewrite' && isset($_SESSION['join'])){
                 <input type="email" name="email" value="<?php print(htmlspecialchars($_POST['email'], ENT_QUOTES)) ?>">
                 <?php if($error['email']==='blank'): ?>
                 <p>* メールアドレスを入力してください</p>
+                <?php endif; ?>
+                <?php if($error['email']==='duplicate'): ?>
+                <p>* このメールアドレスは既に登録されています</p>
                 <?php endif; ?>
             </dd>
             <dt>パスワード　必須</dt>
