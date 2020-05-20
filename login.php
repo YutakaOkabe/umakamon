@@ -2,8 +2,16 @@
 session_start();
 require('dbconnect.php');
 
+// 前にログインしてクッキーに値がある場合
+if ($_COOKIE !== ''){
+    $email = $_COOKIE['email'];
+}
+
 if (!empty($_POST)) {
-    // ログインボタンが押されている
+// ログインボタンが押されている
+    // クッキーの値のままになっているのでログインが押されたら上書き
+    $email = $_POST['email'];
+
     if ($_POST['email'] === '') {
         $error['email'] = 'blank';
     }
@@ -21,7 +29,14 @@ if (!empty($_POST)) {
             // 誰がいつログインしたのかをindexページに渡す
             $_SESSION['id'] = $member['id'];
             $_SESSION['time'] = time();
-            header('Location: index.php');
+
+            // ログイン情報をクッキーに保存
+            // パスワードを暗号化状態で保存しても自動的な入力が正しくできないため意味がない
+            if ($_POST['save'] === 'on'){
+                setcookie('email', $_POST['email'], time()+60*60*24*14 );
+            }
+
+            header('Location: post.php');
             exit();
         } else {
             // ヒットするアカウントがなかったのでログイン失敗
@@ -49,7 +64,7 @@ if (!empty($_POST)) {
         <dl>
             <dt>メールアドレス</dt>
             <dd>
-                <input type="email" name="email" value="">
+                <input type="email" name="email" value="<?php print(htmlspecialchars($email, ENT_QUOTES)); ?>">
                 <?php if($error['email']==='blank'): ?>
                 <p>* メールアドレスを入力してください</p>
                 <?php endif; ?>
@@ -66,7 +81,7 @@ if (!empty($_POST)) {
             </dd>
             <dt>ログイン情報の記録</dt>
             <dd>
-                <input id="save" type="checkbox" name="save">
+                <input id="save" type="checkbox" name="save" value="on">
                 <label for="save">次回からはログイン情報を記録する</label>
                 <!--label:ボックスの横に説明を追加--><!--for:説明を加えたいボックスのidを入力-->
             </dd>
