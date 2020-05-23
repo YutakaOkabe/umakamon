@@ -62,7 +62,8 @@ if (!empty($_POST)){
         <p>
             <?php print(htmlspecialchars($post['name'], ENT_QUOTES)); ?>&nbsp;
             <span><img src="member_picture/<?php print(htmlspecialchars($post['picture'], ENT_QUOTES)); ?>" alt="$post['name']" width="50" height="50"></span>&nbsp;
-            <?php print(htmlspecialchars($post['impression'], ENT_QUOTES)); ?>&nbsp;<?php print(htmlspecialchars($post['created'], ENT_QUOTES)); ?>
+            <?php print(htmlspecialchars($post['impression'], ENT_QUOTES)); ?>&nbsp;
+            <a href="view.php?id=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>"><?php print(htmlspecialchars($post['created'], ENT_QUOTES)); ?></a>
             <a href="index.php?res=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">返信</a>
         </p>
     <?php endforeach; ?>
