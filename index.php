@@ -14,10 +14,30 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()){
         header('Location: login.php');
     }
 
+$page = $_REQUEST['page'];
+if ($page == ''){
+    $page = 1;
+}
+// 小さい数に対する処理
+$page = max($page, 1);
+
+// 大きい数に対する処理
+$counts = $db->query('SELECT COUNT(*) AS cnt FROM posts');
+$cnt = $counts->fetch();
+// 配列cntの要素cntに件数が入ってる
+$maxPage = ceil($cnt['cnt'] / 5);
+// ceil:切り上げ floor:切り捨て
+$page = min($page, $maxPage);
+
+
+$start = ($page - 1) * 5;
 
 // postsデータベースの情報を引き出す
-// 情報を全て引き出すのでprepareがいらない
-$posts = $db->query('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.members_id ORDER BY p.created DESC');
+// 情報を全て引き出すのでprepareがいらない -> ページネーションで5件だけ表示するのでprepareに変更
+$posts = $db->prepare('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.members_id ORDER BY p.created DESC LIMIT ?,5');
+$posts->bindParam(1, $start, PDO::PARAM_INT);
+// executeで渡すと文字列で入ってしまうので，数字で渡したかったらbindParamして次にexecute
+$posts->execute();
 
 if (isset($_REQUEST['res'])){
     // 返信の処理
@@ -26,7 +46,7 @@ if (isset($_REQUEST['res'])){
 
     $table = $response->fetch();
     $originalMessage = $table['impression'];
-    $sendTo = '@' . $table['name'] ;
+    $sendTo = '@' . $table['name'];
 
 }
 
@@ -56,6 +76,7 @@ if (!empty($_POST)){
 </head>
 <body>
 　　<div style="text-align: right"><a href="post.php">投稿画面へ</a></div>
+　　<div style="text-align: right"><a href="logout.php">ログアウト</a></div>
     <h2><?php print(htmlspecialchars($member['name'], ENT_QUOTES)); ?>さんのタイムライン</h2>
 
     <?php foreach ($posts as $post): ?>
@@ -63,11 +84,35 @@ if (!empty($_POST)){
             <?php print(htmlspecialchars($post['name'], ENT_QUOTES)); ?>&nbsp;
             <span><img src="member_picture/<?php print(htmlspecialchars($post['picture'], ENT_QUOTES)); ?>" alt="$post['name']" width="50" height="50"></span>&nbsp;
             <?php print(htmlspecialchars($post['impression'], ENT_QUOTES)); ?>&nbsp;
+            <a href="index.php?res=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">返信</a>&nbsp;
+            <?php if ( $_SESSION['id'] === $post['members_id']): ?>
+                <!--現在のログインユーザーがそのメッセージの投稿者と一致するならば削除可能-->
+                <a href="delete.php?id=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">削除</a>
+            <?php endif; ?>
+            <br>
             <a href="view.php?id=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>"><?php print(htmlspecialchars($post['created'], ENT_QUOTES)); ?></a>
-            <a href="index.php?res=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">返信</a>
+            <?php if ($post['reply_message_id'] > 0): ?>
+                <a href="view.php?id=<?php print(htmlspecialchars($post['reply_message_id'], ENT_QUOTES)); ?>">返信元のメッセージ</a>
+            <?php endif; ?>
         </p>
     <?php endforeach; ?>
+
+    <!--ページネーション：次（前）のページがあればリンクを張る-->
+    <ul>
+        <?php if ( $page > 1 ): ?>
+            <li><a href="index.php?page=<?php print($page-1); ?>">前のページ</a></li>
+        <?php else: ?>
+            <li>前のページ</li>
+        <?php endif; ?>
+        <?php if ( $page < $maxPage ): ?>
+            <li><a href="index.php?page=<?php print($page+1); ?>">次のページ</a></li>
+        <?php else: ?>
+            <li>次のページ</li>
+        <?php endif; ?>
+    </ul>
     <br>
+
+    <!--返信機能-->
     <p>返信画面</p>
     <form action="" method="post">
         <p><?php print(htmlspecialchars($originalMessage, ENT_QUOTES)); ?></p>
