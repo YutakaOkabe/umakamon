@@ -65,58 +65,117 @@ if ($_REQUEST['action'] === 'rewrite' && isset($_SESSION['join'])){
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>会員登録</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <!--
+    <link rel="stylesheet" href="css/style.css">
+    -->
+
+    <!-- 画像を表示するCSS -->
+    <style>
+    .imagePreview {
+        width: 180px;
+        height: 180px;
+        background-position: center center;
+        background-size: cover;
+        -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
+        display: inline-block;
+    }
+    </style>
+
+    <title>アカウント作成</title>
 </head>
 <body>
-<h1>会員登録</h1>
-    <p>以下のフォームに必要事項をご記入ください</p>
-    <form action="" method="post" enctype="multipart/form-data">
-    <!--フォーム内でnameで名づけられたデータをaction属性のURLへmethod属性のHTTPのPOSTメソッドで送信-->
-    <!--action属性がからの場合には自分自身のページに戻ってくる-->
-    <!--enctype="multipart/form-data":フォームでファイルを送信するときに必要になる-->
-        <dl>
-            <dt>ニックネーム　必須</dt>
-            <dd>
-                <input type="text" name="name" value="<?php print(htmlspecialchars($_POST['name'], ENT_QUOTES)) ?>">
+<img src="../image/logo.png" class="rounded mx-auto mt-5 d-block" alt="うまかもんロゴ">
+<div class="container">
+    <div class="text-center">
+        <p class="font-weight-lighter">アカウント作成</p>
+        <form action="" method="post" enctype="multipart/form-data"  class="form-group">
+        <!--フォーム内でnameで名づけられたデータをaction属性のURLへmethod属性のHTTPのPOSTメソッドで送信-->
+        <!--action属性がからの場合には自分自身のページに戻ってくる-->
+        <!--enctype="multipart/form-data":フォームでファイルを送信するときに必要になる-->
+            <div class="text-right text-danger">*必須</div>
+            <div>
+                <input type="text" class="form-control" name="name" value="<?php print(htmlspecialchars($_POST['name'], ENT_QUOTES)) ?>" placeholder="ニックネーム">
                 <!--valueはボックス内の初期値-->
                 <!--htmlspecialchars:文字列のエンティティ化（記号なども文字列として認識する）-->
+                <small class="form-text text-left text-muted mb-2">アカウント名になります</small>
                 <?php if($error['name']==='blank'): ?>
-                <p>* ニックネームを入力してください</p>
+                <p class="text-left text-danger">* ニックネームを入力してください</p>
                 <?php endif; ?>
-            </dd>
-            <dt>メールアドレス　必須</dt>
-            <dd>
-                <input type="email" name="email" value="<?php print(htmlspecialchars($_POST['email'], ENT_QUOTES)) ?>">
+            </div>
+            <div class="text-right text-danger">*必須</div>
+            <div>
+                <input type="email" class="form-control" name="email" value="<?php print(htmlspecialchars($_POST['email'], ENT_QUOTES)) ?>" placeholder="メールアドレス">
+                <small class="form-text text-left text-muted mb-2">登録時にメールを送信します</small>
                 <?php if($error['email']==='blank'): ?>
-                <p>* メールアドレスを入力してください</p>
+                <p class="text-left text-danger">* メールアドレスを入力してください</p>
                 <?php endif; ?>
                 <?php if($error['email']==='duplicate'): ?>
-                <p>* このメールアドレスは既に登録されています</p>
+                <p class="text-left text-danger">* このメールアドレスは既に登録されています</p>
                 <?php endif; ?>
-            </dd>
-            <dt>パスワード　必須</dt>
-            <dd>
-                <input type="password" name="password" value="<?php print(htmlspecialchars($_POST['password'], ENT_QUOTES)) ?>">
+            </div>
+            <div class="text-right text-danger">*必須</div>
+            <div>
+                <input type="password" class="form-control" name="password" value="<?php print(htmlspecialchars($_POST['password'], ENT_QUOTES)) ?>" placeholder="パスワード">
+                <small class="form-text text-left text-muted mb-2">4文字以上で設定してください</small>
                 <?php if($error['password']==='blank'): ?>
-                <p>* パスワードを入力してください</p>
+                <p class="text-left text-danger">* パスワードを入力してください</p>
                 <?php endif; ?>
                 <?php if($error['password']==='length'): ?>
-                <p>* パスワードは4文字以上で設定してください</p>
+                <p class="text-left text-danger">* パスワードは4文字以上で設定してください</p>
                 <?php endif; ?>
-            </dd>
-            <dt>写真など</dt>
-            <dd>
-                <input type="file" name="image">
-                <?php if($error['image']==='type'): ?>
-                <p>* 写真は「jpg」「png」「gif」のいづれかの形式でアップロードしてください</p>
-                <?php endif; ?>
-            </dd>
-        </dl>
-        <input type="submit" value="ログインする">
-    </form>
+            </div>
+            <div>
+                <!-- 元々 -->
+                    <!-- <input type="file" name="image">
+                    <?php if($error['image']==='type'): ?>
+                    <p>* 写真は「jpg」「png」「gif」のいづれかの形式でアップロードしてください</p>
+                    <?php endif; ?> -->
+
+                <!-- Bootstrapでつくったfile_inputでアップロードした画像をその場で表示 https://qiita.com/gsk3beta/items/46d44793827920282f75　-->
+                    <div class="container page-header col-7">
+                            <div class="imagePreview"></div>
+                            <div class="input-group">
+                                <label class="input-group-btn">
+                                    <span class="btn btn-primary">
+                                        ファイルを選択<input type="file" style="display:none" class="uploadFile" name="image">
+                                    </span>
+                                </label>
+                                <input type="text" class="form-control" readonly="">
+                                <?php if($error['image']==='type'): ?>
+                                    <p class="text-left text-danger">* 写真は「jpg」「png」「gif」のいづれかの形式でアップロードしてください</p>
+                                <?php endif; ?>
+                            </div>
+                    </div>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+                    <script>
+                    $(document).on('change', ':file', function() {
+                        var input = $(this),
+                        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                        input.parent().parent().next(':text').val(label);
+
+                        var files = !!this.files ? this.files : [];
+                        if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+                        if (/^image/.test( files[0].type)){ // only image file
+                            var reader = new FileReader(); // instance of the FileReader
+                            reader.readAsDataURL(files[0]); // read the local file
+                            reader.onloadend = function(){ // set image data as background of div
+                                input.parent().parent().parent().prev('.imagePreview').css("background-image", "url("+this.result+")");
+                            }
+                        }
+                    });
+                    </script>
+            </div>
+            <!-- <input type="submit" value="登録内容を確認する"> -->
+            <button type="submit" class="btn btn-primary mt-3 mb-4">登録内容を確認する</button>
+        </form>
+    </div>
     
+</div>
     
 </body>
 </html>
