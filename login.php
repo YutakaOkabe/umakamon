@@ -46,49 +46,59 @@ if (!empty($_POST)) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <!--
+    <link rel="stylesheet" href="css/style.css">
+    -->
     <title>ログイン</title>
 </head>
 <body>
-<h1>ログインする</h1>
-    <p>メールアドレスとパスワードを入力してログインしてください</p>
-    <p>入会手続きがまだの方はこちら→<a href="join/index.php">入会手続きをする</a></p>
-    <form action="" method="post">
-    <!--フォーム内でnameで名づけられたデータをaction属性のURLへmethod属性のHTTPのPOSTメソッドで送信-->
-        <dl>
-            <dt>メールアドレス</dt>
-            <dd>
-                <input type="email" name="email" value="<?php print(htmlspecialchars($email, ENT_QUOTES)); ?>">
+<img src="image/logo.png" class="rounded mx-auto mt-5 d-block" alt="うまかもんロゴ">
+<div class="container">
+    <div class=" text-center">
+        <p class="font-weight-lighter">ログイン</p>
+        <form action="" method="post" class="form-group">
+        <!--フォーム内でnameで名づけられたデータをaction属性のURLへmethod属性のHTTPのPOSTメソッドで送信-->
+            <div>
+                <input type="email" class="form-control" name="email" value="<?php print(htmlspecialchars($email, ENT_QUOTES)); ?>" placeholder="メールアドレス">
                 <?php if($error['email']==='blank'): ?>
-                <p>* メールアドレスを入力してください</p>
+                <p class="text-left text-danger">* メールアドレスを入力してください</p>
                 <?php endif; ?>
-            </dd>
-            <dt>パスワード</dt>
-            <dd>
-                <input type="password" name="password" value="">
+            </div>
+            <div>
+                <input type="password" class="form-control" name="password" value="" placeholder="パスワード">
                 <?php if($error['password']==='blank'): ?>
-                <p>* パスワードを入力してください</p>
+                <p class="text-left text-danger">* パスワードを入力してください</p>
                 <?php endif; ?>
                 <?php if($error['login']==='failed'): ?>
-                <p>* ログインに失敗しました．情報を正しく入力してください．</p>
+                <p class="text-left text-danger">* ログインに失敗しました．情報を正しく入力してください．</p>
                 <?php endif; ?>
-            </dd>
-            <dt>ログイン情報の記録</dt>
-            <dd>
+            </div>
+            <div class="text-left">
                 <input id="save" type="checkbox" name="save" value="on">
                 <label for="save">次回からはログイン情報を記録する</label>
                 <!--label:ボックスの横に説明を追加--><!--for:説明を加えたいボックスのidを入力-->
-            </dd>
-        </dl>
-        <input type="submit" value="ログインする">
-        <!--buttonタグでも送信できるし，button使うともっと複雑なボタンコンテンツを作れるらしい-->
-    </form>
+            </div>
+            <!-- <input type="submit" value="ログインする"> -->
+            <!--buttonタグでも送信できるし，button使うともっと複雑なボタンコンテンツを作れるらしい-->
+            <button type="submit" class="btn btn-primary mb-4">ログインする</button>
+            <p>アカウントをお持ちですか？<a href="join/index.php">今すぐアカウントを作成</a></p>
+
+
+            <!-- アカウントを作成せずに始めるボタンが欲しい -->
+
+
+        </form>
+    </div>
+    
+</div>
+    
     
     
 </body>
