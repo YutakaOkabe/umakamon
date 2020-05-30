@@ -35,10 +35,10 @@ if (!empty($_POST)) {
             $error['email'] = 'duplicate';
         }
     }
-
+    // セッションに情報を記録
     if (empty($error)) {
         $image = date('YmdHis') . $fileName;
-        // 「年月日秒＋ファイル名」としてファイルを保存することで重複を防ぐ
+            // 「年月日秒＋ファイル名」としてファイルを保存することで重複を防ぐ
         move_uploaded_file($_FILES['image']['tmp_name'], '../member_picture/' . $image);
         // $_FILES['image']['tmp_name']にあるファイルを第2引数の場所に移動
         $_SESSION['join'] = $_POST;
@@ -136,18 +136,18 @@ if ($_REQUEST['action'] === 'rewrite' && isset($_SESSION['join'])){
 
                 <!-- Bootstrapでつくったfile_inputでアップロードした画像をその場で表示 https://qiita.com/gsk3beta/items/46d44793827920282f75　-->
                     <div class="container page-header col-7">
-                            <div class="imagePreview"></div>
-                            <div class="input-group">
-                                <label class="input-group-btn">
-                                    <span class="btn btn-primary">
-                                        ファイルを選択<input type="file" style="display:none" class="uploadFile" name="image">
-                                    </span>
-                                </label>
-                                <input type="text" class="form-control" readonly="">
-                                <?php if($error['image']==='type'): ?>
-                                    <p class="text-left text-danger">* 写真は「jpg」「png」「gif」のいづれかの形式でアップロードしてください</p>
-                                <?php endif; ?>
-                            </div>
+                        <div class="imagePreview"></div>
+                        <div class="input-group">
+                            <label class="input-group-btn">
+                                <span class="btn btn-primary">
+                                    ファイルを選択<input type="file" style="display:none" class="uploadFile" name="image">
+                                </span>
+                            </label>
+                            <input type="text" class="form-control" readonly="">
+                            <?php if($error['image']==='type'): ?>
+                                <p class="text-left text-danger">* 写真は「jpg」「png」「gif」のいづれかの形式でアップロードしてください</p>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
                     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
