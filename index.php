@@ -82,7 +82,9 @@ if (!empty($_POST)){
     <?php foreach ($posts as $post): ?>
         <p>
             <?php print(htmlspecialchars($post['name'], ENT_QUOTES)); ?>&nbsp;
-            <span><img src="member_picture/<?php print(htmlspecialchars($post['picture'], ENT_QUOTES)); ?>" alt="$post['name']" width="50" height="50"></span>&nbsp;
+            <span><img src="member_picture/<?php print(htmlspecialchars($post['picture'], ENT_QUOTES)); ?>" alt="画像指定なし" width="50" height="50"></span>&nbsp;
+            <!-- 画像の指定がない時のアイコンどうする？ -->
+
             <?php print(htmlspecialchars($post['impression'], ENT_QUOTES)); ?>&nbsp;
             <a href="index.php?res=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">返信</a>&nbsp;
             <?php if ( $_SESSION['id'] === $post['members_id']): ?>
