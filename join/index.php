@@ -38,9 +38,11 @@ if (!empty($_POST)) {
     // セッションに情報を記録
     if (empty($error)) {
         $image = date('YmdHis') . $fileName;
-            // 「年月日秒＋ファイル名」としてファイルを保存することで重複を防ぐ
+        // 「年月日秒＋ファイル名」としてファイルを保存することで重複を防ぐ
+        // ファイルがアップロードされていなくても年月日秒は付加されることに注意
         move_uploaded_file($_FILES['image']['tmp_name'], '../member_picture/' . $image);
         // $_FILES['image']['tmp_name']にあるファイルを第2引数の場所に移動
+        // この段階で移動しているので書き直しで使われなくなってもmember_pictureに保存はされる
         $_SESSION['join'] = $_POST;
         $_SESSION['join']['image'] = $image;
         header('Location: check.php');
