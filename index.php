@@ -70,14 +70,55 @@ if (!empty($_POST)){
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <!--
+    <link rel="stylesheet" href="css/style.css">
+    -->
+
+
     <title>うまかもん</title>
 </head>
 <body>
-　　<div style="text-align: right"><a href="post.php">投稿画面へ</a></div>
-　　<div style="text-align: right"><a href="logout.php">ログアウト</a></div>
-    <h2><?php print(htmlspecialchars($member['name'], ENT_QUOTES)); ?>さんのタイムライン</h2>
+
+<!-- ナビゲーションメニュー -->
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <!-- ロゴ -->
+    <a class="navbar-brand" href="index.php"><img src="image/logo_onlylogo.png" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">うまかもん</a>
+    <!-- 狭い時にハンバーガーにする記述 -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- ナビゲーションコンテンツ -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="index.php">タイムライン<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="post.php">ポスト</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="map.php">マップ</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                会員情報
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="account.php">会員情報確認</a>
+                <a class="dropdown-item" href="login.php">別アカウントでログイン</a>
+                <a class="dropdown-item" href="logout.php">ログアウト</a>
+            </li>
+        </ul>
+
+        <!-- ログインアカウントの表示 -->
+        <span class="navbar-text"><img src="member_picture/<?php print(htmlspecialchars($member['picture'], ENT_QUOTES)); ?>" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">&nbsp;<?php print(htmlspecialchars($member['name'], ENT_QUOTES)); ?>さんでログイン中</span>
+    </div>
+</nav>
+
 
     <?php foreach ($posts as $post): ?>
         <p>
@@ -122,5 +163,13 @@ if (!empty($_POST)){
         <input type="hidden" name="reply_post_id" value="<?php print(htmlspecialchars($_REQUEST['res'], ENT_QUOTES)); ?>">
         <input type="submit" value="返信する">
     </form>
+
+
+<!-- BootstrapのJS読み込み <- 読み込んでないとメニュー開かない　-->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+
 </body>
 </html>
