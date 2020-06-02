@@ -115,55 +115,78 @@ if (!empty($_POST)){
         </ul>
 
         <!-- ログインアカウントの表示 -->
-        <span class="navbar-text"><img src="member_picture/<?php print(htmlspecialchars($member['picture'], ENT_QUOTES)); ?>" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">&nbsp;<?php print(htmlspecialchars($member['name'], ENT_QUOTES)); ?>さんでログイン中</span>
+        <span class="navbar-text my-auto"><img class="rounded" src="member_picture/<?php print(htmlspecialchars($member['picture'], ENT_QUOTES)); ?>" width="40" height="40" class="d-inline-block align-top" alt="" loading="lazy">&nbsp;<?php print(htmlspecialchars($member['name'], ENT_QUOTES)); ?>さんでログイン中</span>
     </div>
 </nav>
 
 
-    <?php foreach ($posts as $post): ?>
-        <p>
-            <?php print(htmlspecialchars($post['name'], ENT_QUOTES)); ?>&nbsp;
-            <span><img src="member_picture/<?php print(htmlspecialchars($post['picture'], ENT_QUOTES)); ?>" alt="画像指定なし" width="50" height="50"></span>&nbsp;
-            <!-- 画像の指定がない時のアイコンどうする？ -->
+<div class="container">
+    <div class="text-center mt-5">
+        <?php foreach ($posts as $post): ?>
+            <!-- 投稿 -->
+            <div class="row border">
+                <!-- 左側　画像 -->
+                <div class="col my-auto">
+                    <img class="rounded" src="member_picture/<?php print(htmlspecialchars($post['picture'], ENT_QUOTES)); ?>" alt="画像指定なし" width="80" height="80">
+                </div>
+                <!-- 右側 テキスト-->
+                <div class="col-9">
+                    <!-- 名前と作成日 -->
+                    <div class="row justify-content-between">
+                        <h3 class="text-left"><?php print(htmlspecialchars($post['name'], ENT_QUOTES)); ?></h3>
+                        <a class="text-right" href="view.php?id=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>"><?php print(htmlspecialchars($post['created'], ENT_QUOTES)); ?></a>
+                    </div>
+                    <!-- 投稿に対する操作 -->
+                    <div class="text-left">
+                        <!-- 返信 -->
+                        <p><?php print(htmlspecialchars($post['impression'], ENT_QUOTES)); ?></p>
+                        <a href="index.php?res=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">返信</a>
+                        <!-- 削除 --現在のログインユーザーがそのメッセージの投稿者と一致するならば削除可能　-->
+                        <?php if ( $_SESSION['id'] === $post['members_id']): ?>
+                            <a class="ml-4" href="delete.php?id=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">削除</a>
+                        <?php endif; ?>
+                        <!-- 返信元のメッセージ表示-- 返信の投稿のみ -->
+                        <?php if ($post['reply_message_id'] > 0): ?>
+                            <a class="ml-4" href="view.php?id=<?php print(htmlspecialchars($post['reply_message_id'], ENT_QUOTES)); ?>">返信元のメッセージ</a>
+                        <?php endif; ?>
+                    </div>
+                    
+                </div>
+            </div>
+        <?php endforeach; ?>
 
-            <?php print(htmlspecialchars($post['impression'], ENT_QUOTES)); ?>&nbsp;
-            <a href="index.php?res=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">返信</a>&nbsp;
-            <?php if ( $_SESSION['id'] === $post['members_id']): ?>
-                <!--現在のログインユーザーがそのメッセージの投稿者と一致するならば削除可能-->
-                <a href="delete.php?id=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>">削除</a>
+        <!--ページネーション：次（前）のページがあればリンクを張る-->
+        <div class="mt-3">
+            <?php if ( $page > 1 ): ?>
+                <a class="btn btn-outline-primary" href="index.php?page=<?php print($page-1); ?>" role="button">前のページ</a>
+            <?php else: ?>
+                <button type="button" class="btn btn-outline-dark">前のページ</button>
             <?php endif; ?>
-            <br>
-            <a href="view.php?id=<?php print(htmlspecialchars($post['id'], ENT_QUOTES)); ?>"><?php print(htmlspecialchars($post['created'], ENT_QUOTES)); ?></a>
-            <?php if ($post['reply_message_id'] > 0): ?>
-                <a href="view.php?id=<?php print(htmlspecialchars($post['reply_message_id'], ENT_QUOTES)); ?>">返信元のメッセージ</a>
+            <?php if ( $page < $maxPage ): ?>
+                <a class="btn btn-outline-primary" href="index.php?page=<?php print($page+1); ?>" role="button">次のページ</a>
+            <?php else: ?>
+                <button type="button" class="btn btn-outline-dark">次のページ</button>
             <?php endif; ?>
-        </p>
-    <?php endforeach; ?>
+        </div>
 
-    <!--ページネーション：次（前）のページがあればリンクを張る-->
-    <ul>
-        <?php if ( $page > 1 ): ?>
-            <li><a href="index.php?page=<?php print($page-1); ?>">前のページ</a></li>
-        <?php else: ?>
-            <li>前のページ</li>
-        <?php endif; ?>
-        <?php if ( $page < $maxPage ): ?>
-            <li><a href="index.php?page=<?php print($page+1); ?>">次のページ</a></li>
-        <?php else: ?>
-            <li>次のページ</li>
-        <?php endif; ?>
-    </ul>
-    <br>
 
-    <!--返信機能-->
-    <p>返信画面</p>
-    <form action="" method="post">
-        <p><?php print(htmlspecialchars($originalMessage, ENT_QUOTES)); ?></p>
-        <textarea name="replyMessage" id="" cols="30" rows="10"><?php print(htmlspecialchars($sendTo, ENT_QUOTES)); ?></textarea>
-        <input type="hidden" name="reply_post_id" value="<?php print(htmlspecialchars($_REQUEST['res'], ENT_QUOTES)); ?>">
-        <input type="submit" value="返信する">
-    </form>
+        <!--返信機能-->
+        <form class="form-group" action="" method="post">
+            <div class="text-left">
+                <p>返信先：<?php print(htmlspecialchars($sendTo, ENT_QUOTES)); ?></p>
+                <p>投稿：<?php print(htmlspecialchars($originalMessage, ENT_QUOTES)); ?></p>
+            </div>
+            <textarea class="form-control" name="replyMessage" id="" rows="8"><?php print(htmlspecialchars($sendTo, ENT_QUOTES)); ?></textarea>
+            <input type="hidden" name="reply_post_id" value="<?php print(htmlspecialchars($_REQUEST['res'], ENT_QUOTES)); ?>">
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">返信する</button>
+            </div>
+            
+        </form>
 
+    </div>
+</div>
+    
 
 <!-- BootstrapのJS読み込み <- 読み込んでないとメニュー開かない　-->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
