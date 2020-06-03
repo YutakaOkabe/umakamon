@@ -51,18 +51,25 @@ if (isset($_REQUEST['res'])){
 }
 
 if (!empty($_POST)){
+    // 返信ボタンを押すと返信先がメッセージに記入されてしまうので内容が空白でもエラーにならない
     if ($_POST['replyMessage'] !== ''){
-        $reply = $db->prepare('INSERT INTO posts SET members_id=?, impression=?, reply_message_id=?, created=NOW()');
-        $reply->execute(array(
-            $member['id'],
-            $_POST['replyMessage'],
-            $_POST['reply_post_id']
-        ));
-        // $_POSTの値を消してタイムラインを再読み込みする
-        header('Location: index.php');
-        exit();
+        if ($_POST['reply_post_id'] !== '') {
+            $reply = $db->prepare('INSERT INTO posts SET members_id=?, impression=?, reply_message_id=?, created=NOW()');
+            $reply->execute(array(
+                $member['id'],
+                $_POST['replyMessage'],
+                $_POST['reply_post_id']
+            ));
+            // $_POSTの値を消してタイムラインを再読み込みする
+            header('Location: index.php');
+            exit();
+            }else{
+                $error['reply_post_id'] = 'blank'; 
+            }
+        }else{
+        $error['replyMessage'] = 'blank'; 
     }
-}
+    }
 
 ?>
 
@@ -105,17 +112,17 @@ if (!empty($_POST)){
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                会員情報
+                アカウント情報
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="account.php">会員情報確認</a>
+                <a class="dropdown-item" href="myaccount.php">アカウント情報確認</a>
                 <a class="dropdown-item" href="login.php">別アカウントでログイン</a>
                 <a class="dropdown-item" href="logout.php">ログアウト</a>
             </li>
         </ul>
 
         <!-- ログインアカウントの表示 -->
-        <span class="navbar-text my-auto"><img class="rounded" src="member_picture/<?php print(htmlspecialchars($member['picture'], ENT_QUOTES)); ?>" width="40" height="40" class="d-inline-block align-top" alt="" loading="lazy">&nbsp;<?php print(htmlspecialchars($member['name'], ENT_QUOTES)); ?>さんでログイン中</span>
+        <a class="navbar-text my-auto" href="myaccount.php"><img class="rounded" src="member_picture/<?php print(htmlspecialchars($member['picture'], ENT_QUOTES)); ?>" width="40" height="40" class="d-inline-block align-top" alt="" loading="lazy">&nbsp;<?php print(htmlspecialchars($member['name'], ENT_QUOTES)); ?>さんでログイン中</a>
     </div>
 </nav>
 
@@ -178,6 +185,17 @@ if (!empty($_POST)){
             </div>
             <textarea class="form-control" name="replyMessage" id="" rows="8"><?php print(htmlspecialchars($sendTo, ENT_QUOTES)); ?></textarea>
             <input type="hidden" name="reply_post_id" value="<?php print(htmlspecialchars($_REQUEST['res'], ENT_QUOTES)); ?>">
+            
+            <!-- 返信先が設定されなかった場合のエラー処理 -->
+            <?php if($error['reply_post_id']==='blank'): ?>
+                <p class="text-left text-danger">* 返信先を設定してください</p>
+            <?php endif; ?>
+
+            <!-- 空白で返信ボタンが押された場合のエラー処理 -->
+            <?php if($error['replyMessage']==='blank'): ?>
+                <p class="text-left text-danger">* 返信を入力してください</p>
+            <?php endif; ?>
+
             <div class="text-right">
                 <button type="submit" class="btn btn-primary">返信する</button>
             </div>
