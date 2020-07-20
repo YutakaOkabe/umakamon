@@ -178,7 +178,7 @@ if (!empty($_POST)){
 
 
         <!--返信機能-->
-        <form class="form-group" action="" method="post">
+        <form class="form-group mt-3" action="" method="post">
             <div class="text-left">
                 <p>返信先：<?php print(htmlspecialchars($sendTo, ENT_QUOTES)); ?></p>
                 <p>投稿：<?php print(htmlspecialchars($originalMessage, ENT_QUOTES)); ?></p>
